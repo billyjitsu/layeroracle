@@ -1,0 +1,76 @@
+import { EndpointId } from "@layerzerolabs/lz-definitions";
+const flareContract = {
+  eid: EndpointId.FLARE_V2_TESTNET,
+  contractName: "MyOApp",
+};
+const sepoliaContract = {
+  eid: EndpointId.SEPOLIA_V2_TESTNET,
+  contractName: "MyOApp",
+};
+export default {
+  contracts: [{ contract: flareContract }, { contract: sepoliaContract }],
+  connections: [
+    {
+      from: flareContract,
+      to: sepoliaContract,
+      config: {
+        sendLibrary: "0x00C5C0B8e0f75aB862CbAaeCfff499dB555FBDD2",
+        receiveLibraryConfig: {
+          receiveLibrary: "0x1d186C560281B8F1AF831957ED5047fD3AB902F9",
+          gracePeriod: 0,
+        },
+        sendConfig: {
+          executorConfig: {
+            maxMessageSize: 10000,
+            executor: "0x9dB9Ca3305B48F196D18082e91cB64663b13d014",
+          },
+          ulnConfig: {
+            confirmations: 1,
+            requiredDVNs: ["0x12523de19dc41c91F7d2093E0CFbB76b17012C8d"],
+            optionalDVNs: [],
+            optionalDVNThreshold: 0,
+          },
+        },
+        receiveConfig: {
+          ulnConfig: {
+            confirmations: 2,
+            requiredDVNs: ["0x12523de19dc41c91F7d2093E0CFbB76b17012C8d"],
+            optionalDVNs: [],
+            optionalDVNThreshold: 0,
+          },
+        },
+      },
+    },
+    {
+      from: sepoliaContract,
+      to: flareContract,
+      config: {
+        sendLibrary: "0xcc1ae8Cf5D3904Cef3360A9532B477529b177cCE",
+        receiveLibraryConfig: {
+          receiveLibrary: "0xdAf00F5eE2158dD58E0d3857851c432E34A3A851",
+          gracePeriod: 0,
+        },
+        sendConfig: {
+          executorConfig: {
+            maxMessageSize: 10000,
+            executor: "0x718B92b5CB0a5552039B593faF724D182A881eDA",
+          },
+          ulnConfig: {
+            confirmations: 2,
+            requiredDVNs: ["0x8eebf8b423B73bFCa51a1Db4B7354AA0bFCA9193"],
+            optionalDVNs: [],
+            optionalDVNThreshold: 0,
+          },
+        },
+        receiveConfig: {
+          ulnConfig: {
+            confirmations: 1,
+            requiredDVNs: ["0x8eebf8b423B73bFCa51a1Db4B7354AA0bFCA9193"],
+            optionalDVNs: [],
+            optionalDVNThreshold: 0,
+          },
+        },
+      },
+    },
+  ],
+};

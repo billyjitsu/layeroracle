@@ -9,6 +9,7 @@ import 'hardhat-deploy'
 import 'hardhat-contract-sizer'
 import '@nomiclabs/hardhat-ethers'
 import '@layerzerolabs/toolbox-hardhat'
+import "@nomicfoundation/hardhat-verify";
 import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
 
 import { EndpointId } from '@layerzerolabs/lz-definitions'
@@ -92,6 +93,21 @@ const config: HardhatUserConfig = {
             accounts,
         }
     },
+    etherscan: {
+        apiKey: {
+          coston2: "coston2", // apiKey is not required, just set a placeholder
+        },
+        customChains: [
+          {
+            network: "coston2",
+            chainId: 114,
+            urls: {
+              apiURL: "https://api.routescan.io/v2/network/testnet/evm/114/etherscan",
+              browserURL: "https://coston2.testnet.flarescan.com"
+            }
+          }
+        ]
+      },
     namedAccounts: {
         deployer: {
             default: 0, // wallet address of index[0], of the mnemonic in .env
