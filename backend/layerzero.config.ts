@@ -7,20 +7,35 @@ const sepoliaContract: OmniPointHardhat = {
     contractName: 'MyOApp',
 }
 
-const fujiContract: OmniPointHardhat = {
-    eid: EndpointId.AVALANCHE_V2_TESTNET,
-    contractName: 'MyOApp',
-}
+// const fujiContract: OmniPointHardhat = {
+//     eid: EndpointId.AVALANCHE_V2_TESTNET,
+//     contractName: 'MyOApp',
+// }
 
-const amoyContract: OmniPointHardhat = {
-    eid: EndpointId.AMOY_V2_TESTNET,
+// const amoyContract: OmniPointHardhat = {
+//     eid: EndpointId.AMOY_V2_TESTNET,
+//     contractName: 'MyOApp',
+// }
+
+// const arbitrumSepoliaContract: OmniPointHardhat = {
+//     eid: EndpointId.ARBSEP_V2_TESTNET,
+//     contractName: 'MyOApp',
+// }
+
+// const alfajoresContract: OmniPointHardhat = {
+//     eid: EndpointId.CELO_V2_TESTNET,
+//     contractName: 'MyOApp',
+// }
+
+const flareContract: OmniPointHardhat = {
+    eid: EndpointId.FLARE_V2_TESTNET,
     contractName: 'MyOApp',
 }
 
 const config: OAppOmniGraphHardhat = {
     contracts: [
         {
-            contract: fujiContract,
+            contract: flareContract,
             /**
              * This config object is optional.
              * The callerBpsCap refers to the maximum fee (in basis points) that the contract can charge.
@@ -33,13 +48,19 @@ const config: OAppOmniGraphHardhat = {
         {
             contract: sepoliaContract,
         },
-        {
-            contract: amoyContract,
-        },
+        // {
+        //     contract: amoyContract,
+        // },
+        // {
+        //     contract: arbitrumSepoliaContract,
+        // },
+        // {
+        //     contract: alfajoresContract,
+        // },
     ],
-    connections: [
+    connections: [  //fix order
         {
-            from: fujiContract,
+            from: flareContract,
             to: sepoliaContract,
             config: {
                 sendConfig: {
@@ -70,26 +91,26 @@ const config: OAppOmniGraphHardhat = {
                 },
             },
         },
-        {
-            from: fujiContract,
-            to: amoyContract,
-        },
-        {
-            from: sepoliaContract,
-            to: fujiContract,
-        },
-        {
-            from: sepoliaContract,
-            to: amoyContract,
-        },
-        {
-            from: amoyContract,
-            to: sepoliaContract,
-        },
-        {
-            from: amoyContract,
-            to: fujiContract,
-        },
+        // {
+        //     from: fujiContract,
+        //     to: amoyContract,
+        // },
+        // {
+        //     from: sepoliaContract,
+        //     to: fujiContract,
+        // },
+        // {
+        //     from: sepoliaContract,
+        //     to: amoyContract,
+        // },
+        // {
+        //     from: amoyContract,
+        //     to: sepoliaContract,
+        // },
+        // {
+        //     from: amoyContract,
+        //     to: fujiContract,
+        // },
     ],
 }
 

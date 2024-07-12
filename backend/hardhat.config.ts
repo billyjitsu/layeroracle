@@ -49,6 +49,15 @@ const config: HardhatUserConfig = {
                     },
                 },
             },
+            {
+                version: '0.8.19',
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 200,
+                    },
+                },
+            },
         ],
     },
     networks: {
@@ -57,16 +66,31 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_SEPOLIA || 'https://rpc.sepolia.org/',
             accounts,
         },
-        fuji: {
-            eid: EndpointId.AVALANCHE_V2_TESTNET,
-            url: process.env.RPC_URL_FUJI || 'https://rpc.ankr.com/avalanche_fuji',
+        // fuji: {
+        //     eid: EndpointId.AVALANCHE_V2_TESTNET,
+        //     url: process.env.RPC_URL_FUJI || 'https://rpc.ankr.com/avalanche_fuji',
+        //     accounts,
+        // },
+        // amoy: {
+        //     eid: EndpointId.AMOY_V2_TESTNET,
+        //     url: process.env.RPC_URL_AMOY || 'https://polygon-amoy-bor-rpc.publicnode.com',
+        //     accounts,
+        // },
+        // arbitrumSepolia: {
+        //     eid: EndpointId.ARBSEP_V2_TESTNET,
+        //     url: process.env.RPC_URL_ARBITRUM_SEPOLIA || 'https://rpc.ankr.com/arbitrum_sepolia',
+        //     accounts,
+        // },
+        // alfajores: {
+        //     eid: EndpointId.CELO_V2_TESTNET,  // ask about this
+        //     url: "https://alfajores-forno.celo-testnet.org",
+        //     accounts,
+        // },
+        flare: {
+            eid: EndpointId.FLARE_V2_TESTNET,
+            url: "https://flaretestnet-bundler.etherspot.io",
             accounts,
-        },
-        amoy: {
-            eid: EndpointId.AMOY_V2_TESTNET,
-            url: process.env.RPC_URL_AMOY || 'https://polygon-amoy-bor-rpc.publicnode.com',
-            accounts,
-        },
+        }
     },
     namedAccounts: {
         deployer: {
