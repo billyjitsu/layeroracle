@@ -960,3 +960,5 @@ export const BORROW_ABI = [
     type: "function",
   },
 ];
+
+export const ERC20_ABI = [];
