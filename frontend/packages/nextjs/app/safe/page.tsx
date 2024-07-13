@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ExternalLinkIcon, getNetwork, useDynamicContext, useSwitchNetwork } from "@dynamic-labs/sdk-react-core";
+import { ExternalLinkIcon, getNetwork, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { createWalletClientFromWallet } from "@dynamic-labs/viem-utils";
 import { formatUnits } from "viem";
 import { baseSepolia } from "viem/chains";
@@ -32,7 +32,6 @@ import { notification } from "~~/utils/scaffold-eth";
 const SafePage = () => {
   const { address, chain, isConnected } = useAccount();
   const { primaryWallet, isAuthenticated } = useDynamicContext();
-  const switchNetwork = useSwitchNetwork();
 
   const [safeDeployed, setSafeDeployed] = useState(false);
   const [safeAddress, setSafeAddress] = useState<string | null>("");
@@ -78,7 +77,7 @@ const SafePage = () => {
     }
   }
 
-  const { data: safeUSDCBalance, refetch: refetchSafeUSDCBalance } = useReadContract({
+  const { refetch: refetchSafeUSDCBalance } = useReadContract({
     abi: ERC20_ABI,
     address: chain ? USDC_ADDRESS[chain?.id] : ("" as `0x${string}`),
     functionName: "balanceOf",
@@ -286,9 +285,9 @@ const SafePage = () => {
                   )}
                 </div>
                 {safeBalance && <div>Balance ETH: {formatUnits(safeBalance.value, safeBalance.decimals)} $ETH</div>}
-                {(safeUSDCBalance as bigint) >= 0n && (
+                {/* {(safeUSDCBalance as bigint) >= 0n && (
                   <div>Balance USDC: {formatUnits(safeUSDCBalance as bigint, 6)} $USDC</div>
-                )}
+                )} */}
               </div>
             </div>
           </div>
@@ -464,12 +463,7 @@ const SafePage = () => {
       ) : (
         <>
           {isConnected && isAuthenticated && network !== baseSepolia.id ? (
-            <button
-              className="btn btn-success"
-              onClick={() => switchNetwork({ wallet: primaryWallet, network: baseSepolia.id })}
-            >
-              Switch to Base Sepolia
-            </button>
+            <button className="btn btn-success">Switch to Base Sepolia</button>
           ) : (
             <button
               className="btn btn-success"
