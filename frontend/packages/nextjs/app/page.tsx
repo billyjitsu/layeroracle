@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { createWalletClientFromWallet } from "@dynamic-labs/viem-utils";
 import type { NextPage } from "next";
-import { Hash, TransactionReceipt, createPublicClient, http } from "viem";
+import { Hash, createPublicClient, http } from "viem";
 import { flareTestnet } from "viem/chains";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
@@ -44,7 +44,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     (async () => {
       if (hash) {
-        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        await publicClient.waitForTransactionReceipt({ hash });
         // setReceipt(receipt);
       }
     })();

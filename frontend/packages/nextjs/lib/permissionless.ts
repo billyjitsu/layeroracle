@@ -75,18 +75,18 @@ export const transferERC20 = async (
   });
 };
 
-// export const crossChainTransferERC20 = async (
-//   smartAccountClient: any,
-//   tokenAddress: string,
-//   amount: bigint,
-//   receiver: string,
-// ) => {
-//   const destChainSelector = "3478487238524512106"; //https://docs.chain.link/ccip/supported-networks/v1_2_0/testnet#base-sepolia-arbitrum-sepolia
+export const crossChainTransferERC20 = async (
+  smartAccountClient: any,
+  tokenAddress: string,
+  amount: bigint,
+  receiver: string,
+) => {
+  const destChainSelector = "3478487238524512106"; //https://docs.chain.link/ccip/supported-networks/v1_2_0/testnet#base-sepolia-arbitrum-sepolia
 
-//   return await smartAccountClient.writeContract({
-//     address: CROSSCHAIN_TRANSFER_CONTRACT_BASE_SEPOLIA,
-//     abi: ERC20_CROSSCHAIN_TRANSFER_ABI,
-//     functionName: "transferTokensPayNative",
-//     args: [destChainSelector, receiver, tokenAddress, amount.toString()],
-//   });
-// };
+  return await smartAccountClient.writeContract({
+    address: CROSSCHAIN_TRANSFER_CONTRACT_BASE_SEPOLIA,
+    abi: ERC20_ABI,
+    functionName: "transferTokensPayNative",
+    args: [destChainSelector, receiver, tokenAddress, amount.toString()],
+  });
+};
