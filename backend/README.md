@@ -1,108 +1,65 @@
 <p align="center">
   <a href="https://layerzero.network">
-    <img alt="LayerZero" style="width: 400px" src="https://docs.layerzero.network/img/LayerZero_Logo_White.svg"/>
+    <img alt="LayerZero" style="width: 200px" src="https://s2.coinmarketcap.com/static/img/coins/200x200/7950.png"/>
   </a>
 </p>
 
 <p align="center">
-  <a href="https://layerzero.network" style="color: #a77dff">Homepage</a> | <a href="https://docs.layerzero.network/" style="color: #a77dff">Docs</a> | <a href="https://layerzero.network/developers" style="color: #a77dff">Developers</a>
+  <a href="https://layerzero.network">
+    <img alt="LayerZero" style="width: 400px" src="https://docs.layerzero.network/img/LayerZero_Logo_White.svg"/>
+  </a>
 </p>
 
-<h1 align="center">OApp Example</h1>
 
-<p align="center">
-  <a href="https://docs.layerzero.network/contracts/oapp" style="color: #a77dff">Quickstart</a> | <a href="https://docs.layerzero.network/contracts/oapp-configuration" style="color: #a77dff">Configuration</a> | <a href="https://docs.layerzero.network/contracts/options" style="color: #a77dff">Message Execution Options</a> | <a href="https://docs.layerzero.network/contracts/endpoint-addresses" style="color: #a77dff">Endpoint Addresses</a>
-</p>
+<h1 align="center">Layer0racle w/ Flare Network</h1>
 
-<p align="center">Template project for getting started with LayerZero's  <code>OApp</code> contract development.</p>
 
-## 1) Developing Contracts
+This project enhances DeFi by integrating oracles into unsupported blockchain networks. Using Flare's reliable price feeds and bridging them via the LayerZero protocol to a Layer 2 (L2) solution, we enable a borrow-lending decentralized exchange (DEX). The L2 setup ensures scalability, low transaction costs, and secure data transfer. Our smart contracts handle collateral management, borrowing, lending, and liquidation, providing a robust and efficient DeFi platform. This approach makes DeFi more accessible and functional for a wider range of blockchain networks.
 
-#### Installing dependencies
 
-We recommend using `pnpm` as a package manager (but you can of course use a package manager of your choice):
+## How it Works
+### Leveraging flare network blocktime updates
+Using Flare network price updates every block, I can get an precise price at the moment of borrowing or leveraging a position on a defi dapp.  Being off by .5% on a 100 times leverage position can be costly to a dapp.  
+We've created an adaptor for the price feed to allow the price feeds to be used with existing defi repos that don't want or can afford to audit or refactor their code (Adaptors folder).  
 
-```bash
-pnpm install
-```
+The borrow lending dapp allows token assets to be setup by the owner, if there is an Flare oracle in existance it can be leveraged on that dapp by adding the token and the oracle associated to its price. 
 
-#### Compiling your contracts
+Layer 0 is utilized by also requesting the price data from another L2 network and requesting that message.  The layer zero contract is modified to read the oracle in question and then return that data to the original chain.  This allows using an oracle on chains that don't have oracles but have Layer Zero support.
 
-This project supports both `hardhat` and `forge` compilation. By default, the `compile` command will execute both:
+The request is made in the original chain and the transaction request made to the layer zer0 contract on flare network to read the data feed and then respond back to the original network and then execute the borrow transaction.  
 
-```bash
-pnpm compile
-```
 
-If you prefer one over the other, you can use the tooling-specific commands:
+## Details
+Mock Tokens are used to mimic token and the oracles according to their true value.  Tokens Folder
+Because of the data structure of the oracle, it is not intuative to just integrate the feed.  We created an adaptor that will convert the data feed to a more familiar format to be used in repos so no refactor of the primary dapp is required.
 
-```bash
-pnpm compile:forge
-pnpm compile:hardhat
-```
+The primary contract `Borrow.sol` gets initialized with the tokens and feeds that it supports.  If there is a feed for it available on Flare, it can be used.  An adaptor must be deployed for it.  Once the tokens are registerd, the dapp can be used as a borrow lend dapp as you must deposit liqudity to be able to borrow what other assets are availbe to be borrowed.
 
-Or adjust the `package.json` to for example remove `forge` build:
+We utilized layer zero's cli kit to build the frame for us to use the lz commands to get an ABA framework up and running. 
 
-```diff
-- "compile": "$npm_execpath run compile:forge && $npm_execpath run compile:hardhat",
-- "compile:forge": "forge build",
-- "compile:hardhat": "hardhat compile",
-+ "compile": "hardhat compile"
-```
+The `LayerZeroABAData.sol` is the contract that handles the messaging between networks.  Calling on the pricefeed oracle to return the data to be used.  The simulation on this can be found in the `test -> foundry -> ABA.t.sol`  Using the layerzero toolk kit, we used the automate the series of request to recieve the data back.
 
-#### Running tests
+1. **Contract Address:**
 
-Similarly to the contract compilation, we support both `hardhat` and `forge` tests. By default, the `test` command will execute both:
+`USDC`
+- Token: 0x34C28d60c8177f65AFF5c48212a687F16b4ab71f
+- Oracle adaptor:  0x9FBe9D872df9701108fD2d33d96383269DC059fb
 
-```bash
-pnpm test
-```
+`WETH` 
+- Token: 0x834c88758EeE333b01e52D6de610166E19E6CCd3
+- Oracle adaptor: 0xAE40A252ad7E2BFc8a86c5f8724d807F5326cd43
 
-If you prefer one over the other, you can use the tooling-specific commands:
+`Flare`
+- Oracle adaptor: 0xBAE8146473796c202ED0439fc67e6F161C430159
 
-```bash
-pnpm test:forge
-pnpm test:hardhat
-```
+`Borrow lending contract:` 
+- 0x7Cd8f07401Ea6bC761b75184AfB33D4121A48754
 
-Or adjust the `package.json` to for example remove `hardhat` tests:
+`Layer Zero Deployment on Flare`
+- 0xc883a9b9Bd6a0eD5a7d3283a11844d139aaABA70
 
-```diff
-- "test": "$npm_execpath test:forge && $npm_execpath test:hardhat",
-- "test:forge": "forge test",
-- "test:hardhat": "$npm_execpath hardhat test"
-+ "test": "forge test"
-```
+`Layer Zero Deployment on Arbitrum Sepolia`
+- 0x1e95F58B075b395bcBCdcE715653b84b933c9986
 
-## 2) Deploying Contracts
-
-Set up deployer wallet/account:
-
-- Rename `.env.example` -> `.env`
-- Choose your preferred means of setting up your deployer wallet/account:
-
-```
-MNEMONIC="test test test test test test test test test test test junk"
-or...
-PRIVATE_KEY="0xabc...def"
-```
-
-To deploy your contracts to your desired blockchains, run the following command in your project's folder:
-
-```bash
-npx hardhat lz:deploy
-```
-
-More information about available CLI arguments can be found using the `--help` flag:
-
-```bash
-npx hardhat lz:deploy --help
-```
-
-By following these steps, you can focus more on creating innovative omnichain solutions and less on the complexities of cross-chain communication.
-
-<br></br>
-
-<p align="center">
-  Join our community on <a href="https://discord-layerzero.netlify.app/discord" style="color: #a77dff">Discord</a> | Follow us on <a href="https://twitter.com/LayerZero_Labs" style="color: #a77dff">Twitter</a>
-</p>
+`Layer Zero Deployment on Flare`
+- 0x2Da847eA6c71460d0Ff2EeaE4aaE64064d09C597
