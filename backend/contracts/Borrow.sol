@@ -58,8 +58,8 @@ contract BorrowLend is Ownable {
     );
     event AllowedTokenSet(address indexed token, address indexed priceFeed);
 
-    constructor(address _flareAdaptorAddress) Ownable(msg.sender) {
-        flareAdaptor = IFlareAdaptor(_flareAdaptorAddress);
+    constructor() Ownable(msg.sender) {
+        // flareAdaptor = IFlareAdaptor(_flareAdaptorAddress);
     }
 
     modifier isAllowedToken(address _token) {
@@ -73,8 +73,9 @@ contract BorrowLend is Ownable {
     }
 
     // hardcoded for 1 feed until I can dynamical pass the number values
-    function readDataFeed() public view returns (uint256, uint256) {
-        (uint256 adjustedValue, uint256 adjustedTimestamp) = flareAdaptor.read();
+    function readDataFeed(address _priceFeed) public view returns (uint256, uint256) {
+        IFlareAdaptor adaptor = IFlareAdaptor(_priceFeed);
+        (uint256 adjustedValue, uint256 adjustedTimestamp) = adaptor.read();
         return (adjustedValue, adjustedTimestamp);
     }
 
@@ -137,11 +138,11 @@ contract BorrowLend is Ownable {
             revert NotLiquidatable({healthFactor: healthFactor(_account), minHealthFactor: MIN_HEALH_FACTOR});
         }
         uint256 halfDebt = borrows[_account][_tokenToRepay] / 2;
-        uint256 halfDebtInUSD = calculateUSDValue(halfDebt);
+        uint256 halfDebtInUSD = calculateUSDValue(_tokenToRepay, halfDebt);
         if (halfDebtInUSD == 0) revert IncorrectRepaymentToken(_tokenToRepay);
         uint256 rewardAmountInUSD = (halfDebtInUSD * LIQUIDATION_REWARD) / 100;
         uint256 totalRewardAmountInRewardToken =
-            calculateTokenValueFromUSD(rewardAmountInUSD + halfDebtInUSD);
+            calculateTokenValueFromUSD(_rewardToken, rewardAmountInUSD + halfDebtInUSD);
         if (totalRewardAmountInRewardToken == 0) {
             revert NoRewardForLiquidation({rewardAmount: rewardAmountInUSD, halfDebtInUSD: halfDebtInUSD});
         }
@@ -158,7 +159,7 @@ contract BorrowLend is Ownable {
             revert NotLiquidatable({healthFactor: healthFactor(_account), minHealthFactor: MIN_HEALH_FACTOR});
         }
         uint256 halfDebt = borrows[_account][_tokenToRepay] / 2;
-        uint256 halfDebtInUSD = calculateUSDValue(halfDebt);
+        uint256 halfDebtInUSD = calculateUSDValue(_tokenToRepay, halfDebt);
         if (halfDebtInUSD == 0) revert IncorrectRepaymentToken(_tokenToRepay);
         uint256 rewardAmountInUSD = (halfDebtInUSD * LIQUIDATION_REWARD) / 100;
         uint256 totalRewardAmountInRewardToken = calculateNativeAssetValueFromUSD(rewardAmountInUSD + halfDebtInUSD);
@@ -228,7 +229,7 @@ contract BorrowLend is Ownable {
             address token = allowedTokens[i];
             uint256 depositedTokenAmount = deposits[_user][token];
             if (depositedTokenAmount > 0) {
-                totalDepositValue += calculateUSDValue(depositedTokenAmount);
+                totalDepositValue += calculateUSDValue(token, depositedTokenAmount);
             }
         }
         return totalDepositValue;
@@ -241,17 +242,17 @@ contract BorrowLend is Ownable {
             address token = allowedTokens[i];
             uint256 borrowedTokenAmount = borrows[_user][token];
             if (borrowedTokenAmount > 0) {
-                totalBorrowValue += calculateUSDValue(borrowedTokenAmount);
+                totalBorrowValue += calculateUSDValue(token, borrowedTokenAmount);
             }
         }
         return totalBorrowValue;
     }
-   
+
     // Get USD Value from Token Amount
-    function calculateUSDValue(uint256 _amount) public view returns (uint256) {
+    function calculateUSDValue(address _token, uint256 _amount) public view returns (uint256) {
         uint256 price;
         //  uint256 timestamp;
-        (price,) = readDataFeed();
+        (price,) = readDataFeed(priceFeedOfToken[_token]);
         return (_amount * price) / 1e18;
     }
 
@@ -259,15 +260,15 @@ contract BorrowLend is Ownable {
     function calculateNativeAssetUSDValue(uint256 _amount) public view returns (uint256) {
         uint256 price;
         // uint256 ethTimestamp;
-        (price,) = readDataFeed();
+        (price,) = readDataFeed(nativeTokenProxyAddress);
         return (_amount * price) / 1e18;
     }
 
     // Get Token Amount from USD Value
-    function calculateTokenValueFromUSD(uint256 _amount) public view returns (uint256) {
+    function calculateTokenValueFromUSD(address _token, uint256 _amount) public view returns (uint256) {
         uint256 price;
         // uint256 timestamp;
-        (price,) = readDataFeed();
+        (price,) = readDataFeed(priceFeedOfToken[_token]);
         return (_amount * 1e18) / price;
     }
 
@@ -275,7 +276,7 @@ contract BorrowLend is Ownable {
     function calculateNativeAssetValueFromUSD(uint256 _amount) public view returns (uint256) {
         uint256 price;
         // uint256 timestamp;
-        (price,) = readDataFeed();
+        (price,) = readDataFeed(nativeTokenProxyAddress);
         return (_amount * 1e18) / price;
     }
 
