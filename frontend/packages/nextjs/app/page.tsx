@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { createWalletClientFromWallet } from "@dynamic-labs/viem-utils";
 import type { NextPage } from "next";
-import { Hash, TransactionReceipt, createPublicClient, http, stringify } from "viem";
+import { Hash, TransactionReceipt, createPublicClient, http } from "viem";
 import { flareTestnet } from "viem/chains";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
 import { BORROW_ABI } from "~~/lib/ABI";
 import { USDC_ABI } from "~~/lib/USDC_ABI";
 import { flareAddress, usdcAddress, wethAddress } from "~~/lib/constants";
-import { sendTransaction, signMessage } from "~~/lib/dynamic";
 
 const publicClient = createPublicClient({
   chain: flareTestnet,
@@ -19,12 +18,12 @@ const publicClient = createPublicClient({
 });
 
 const Home: NextPage = () => {
-  const { primaryWallet, networkConfigurations } = useDynamicContext();
+  const { primaryWallet } = useDynamicContext();
   const connectedAddress = primaryWallet?.address;
   const [amountSupply, setAmountSupply] = useState<{ [key: string]: string }>({});
   const [amountBorrow, setAmountBorrow] = useState<{ [key: string]: string }>({});
   const [hash, setHash] = useState<Hash>();
-  const [receipt, setReceipt] = useState<TransactionReceipt>();
+  // const [receipt, setReceipt] = useState<TransactionReceipt>();
 
   const handleInputChange = (assetName: string, value: string, type: "supply" | "borrow") => {
     if (/^\d*\.?\d{0,2}$/.test(value)) {
@@ -46,7 +45,7 @@ const Home: NextPage = () => {
     (async () => {
       if (hash) {
         const receipt = await publicClient.waitForTransactionReceipt({ hash });
-        setReceipt(receipt);
+        // setReceipt(receipt);
       }
     })();
   }, [hash]);
