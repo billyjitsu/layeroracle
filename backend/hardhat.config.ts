@@ -75,7 +75,7 @@ const config: HardhatUserConfig = {
         // },
         arbitrumSepolia: {
             eid: EndpointId.ARBSEP_V2_TESTNET,
-            url: process.env.RPC_URL_ARBITRUM_SEPOLIA || 'https://rpc.ankr.com/arbitrum_sepolia',
+            url: process.env.RPC_URL_ARBITRUM_SEPOLIA || 'https://public.stackup.sh/api/v1/node/arbitrum-sepolia',
             accounts,
         },
         alfajores: {
